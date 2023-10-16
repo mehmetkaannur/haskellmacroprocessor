@@ -34,7 +34,7 @@ splitText y (x:xs)
   | elem x y = (x:a, "":c)
   | otherwise = (a, (x:b):bs)
        where 
-              (a, c@(b:bs)) = splitText y xs
+       (a, c@(b:bs)) = splitText y xs
 
 {-|
 This function interleaves the characters from the first argument
@@ -42,7 +42,10 @@ list with the strings in the second argument. The second list must
 be non-empty.
 -}
 combine :: [Char] -> [String] -> [String]
-combine = undefined
+combine [] [] = []
+combine (y:ys) [] = [y]:combine ys []
+combine [] (x:xs) = x:combine [] xs
+combine (y:ys) (x:xs) = x:[y]:combine ys xs
 
 {-|
 This function takes a list of lines and splits each line to
@@ -51,7 +54,11 @@ extract a list of keyword-definition pairs.
 > getKeywordDefs ["$x Define x", "$y 55"] == [("$x", "Define x"), ("$y", "55")]
 -}
 getKeywordDefs :: [String] -> KeywordDefs
-getKeywordDefs = undefined
+getKeywordDefs [] = []
+getKeywordDefs [x] = [(b, concat (combine as bs))]
+  where
+    ((a:as),(b:bs)) = splitText [' '] x
+     
 
 {-|
 This function takes the contents of two files, one containing
