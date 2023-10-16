@@ -18,7 +18,8 @@ returning all the values that match with that key.
 > lookUp "A" [("A", 8), ("B", 9), ("C", 5), ("A", 7)] == [8, 7]
 -}
 lookUp :: String -> [(String, a)] -> [a]
-lookUp = undefined
+lookUp y [] = []
+lookUp y xs = [b | (a,b) <- xs, a == y]
 
 {-|
 This function will break up a string with some given separator
@@ -28,7 +29,12 @@ each "word" and the words themselves.
 splitText :: [Char] -- ^ the separators to split on
           -> String -- ^ the string to split
           -> ([Char], [String])
-splitText = undefined
+splitText y [] = ([], [""])
+splitText y (x:xs)
+  | elem x y = (x:a, "":c)
+  | otherwise = (a, (x:b):bs)
+       where 
+              (a, c@(b:bs)) = splitText y xs
 
 {-|
 This function interleaves the characters from the first argument
