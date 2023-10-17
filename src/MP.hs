@@ -31,9 +31,9 @@ splitText :: [Char] -- ^ the separators to split on
           -> ([Char], [String])
 splitText y [] = ([], [""])
 splitText y (x:xs)
-  | elem x y = (x:a, "":c)
+  | x `elem` y = (x:a, "":c)
   | otherwise = (a, (x:b):bs)
-       where 
+       where
        (a, c@(b:bs)) = splitText y xs
 
 {-|
@@ -55,10 +55,10 @@ extract a list of keyword-definition pairs.
 -}
 getKeywordDefs :: [String] -> KeywordDefs
 getKeywordDefs [] = []
-getKeywordDefs [x] = [(b, concat (combine as bs))]
+getKeywordDefs (x:xs) = (b, concat (combine as bs)) : getKeywordDefs xs
   where
-    ((a:as),(b:bs)) = splitText [' '] x
-     
+    (_:as,b:bs) = splitText [' '] x
+
 
 {-|
 This function takes the contents of two files, one containing
@@ -73,7 +73,13 @@ as a result.
 expand :: FileContents -- ^ the template file contents
        -> FileContents -- ^ the info file contents
        -> FileContents
-expand = undefined
+expand (x) = 
+  where 
+    spl = splitText seperators (x)
+    replace :: ([Char], [String]) -> ([Char], [String])
+    replace () = ()
+    replace ([a:as], [b:bs])
+      | length(lookUp '$' b) == 0 = ([a:as], [b:bs])
 
 -- You may wish to uncomment and implement this helper function
 -- when implementing expand
