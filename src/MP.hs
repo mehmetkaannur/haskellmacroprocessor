@@ -32,9 +32,9 @@ splitText :: [Char] -- ^ the separators to split on
 splitText y [] = ([], [""])
 splitText y (x:xs)
   | x `elem` y = (x:a, "":c)
-  | otherwise = (a, (x:b):bs)
+  | otherwise  = (a, (x:b):bs)
        where
-       (a, c@(b:bs)) = splitText y xs
+        (a, c@(b:bs)) = splitText y xs
 
 {-|
 This function interleaves the characters from the first argument
@@ -42,9 +42,9 @@ list with the strings in the second argument. The second list must
 be non-empty.
 -}
 combine :: [Char] -> [String] -> [String]
-combine [] [] = []
-combine (y:ys) [] = [y]:combine ys []
-combine [] (x:xs) = x:combine [] xs
+combine [] []         = []
+combine (y:ys) []     = [y]:combine ys []
+combine [] (x:xs)     = x:combine [] xs
 combine (y:ys) (x:xs) = x:[y]:combine ys xs
 
 {-|
@@ -54,7 +54,7 @@ extract a list of keyword-definition pairs.
 > getKeywordDefs ["$x Define x", "$y 55"] == [("$x", "Define x"), ("$y", "55")]
 -}
 getKeywordDefs :: [String] -> KeywordDefs
-getKeywordDefs [] = []
+getKeywordDefs []     = []
 getKeywordDefs (x:xs) = (b, concat (combine as bs)) : getKeywordDefs xs
   where
     (_:as,b:bs) = splitText [' '] x
@@ -73,14 +73,14 @@ as a result.
 expand :: FileContents -- ^ the template file contents
        -> FileContents -- ^ the info file contents
        -> FileContents
-expand (x) = 
-  where 
-    spl = splitText seperators (x)
-    replace :: ([Char], [String]) -> ([Char], [String])
-    replace () = ()
-    replace ([a:as], [b:bs])
-      | length(lookUp '$' b) == 0 = ([a:as], [b:bs])
+expand a b = concat(combine c [replaceWord y key | y <- d])
+  where
+    (c,d) = splitText separators a
+    rep   = snd(splitText "\n" b)
+    key   = getKeywordDefs rep
 
 -- You may wish to uncomment and implement this helper function
 -- when implementing expand
--- replaceWord :: String -> KeywordDefs -> String
+replaceWord :: String -> KeywordDefs -> String
+replaceWord d@('$':_) key = head (lookUp d key)
+replaceWord d key         = d

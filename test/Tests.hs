@@ -20,6 +20,7 @@ lookUpTests = [ lookUp "A" [("A", 8), ("B",9), ("C",5), ("A",7)] --> [8,7]
               , lookUp "a" ([] :: [(String, Int)])               --> []
               , lookUp "a" [("a", 9)]                            --> [9]
               , lookUp "a" [("b", 9)]                            --> []
+              , lookUp "a" [("a", 9), ("A", 8)]                  --> [9]
               ]
 
 splitTextTests :: [Assertion]
@@ -45,6 +46,7 @@ getKeywordDefsTests = [ getKeywordDefs ["$rule Reproduce this precisely -- or el
                       , getKeywordDefs ["$$ something to think about"]                 --> [("$$","something to think about")]
                       , getKeywordDefs ["$ meanie!"]                                   --> [("$","meanie!")]
                       , getKeywordDefs ["$var  Tristan Allwood"]                       --> [("$var", " Tristan Allwood")]
+                      , getKeywordDefs ["$$$  "]                                       --> [("$$$", " ")]
                       ]
 
 expandTests :: [Assertion]
